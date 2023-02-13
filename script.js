@@ -14,10 +14,14 @@ function Book(title, author, pages, read){
     this.author = author;
     this.pages = pages;
     this.read = read;
-    this.info = function(){
+    // this.info = function(){
         
-        return `${title} by ${author}, ${pages} pages, ${read ? "have read" : "not read yet"}`
-    };
+    //     return `${title} by ${author}, ${pages} pages, ${read ? "have read" : "not read yet"}`
+    // };
+}
+
+Book.prototype.readStatus = function(){
+    this.read = !this.read;
 }
 
 const bookMaker = (title, author, pages, read) => {
@@ -35,18 +39,27 @@ const updateContainer = () =>{
         const author = document.createElement('p');
         author.textContent = book.author;
         const pages = document.createElement('p');
-        pages.textContent = book.pages;
+        pages.textContent = `${book.pages} pages`;
+        const readButton = document.createElement('label');
+        readButton.className = "switch";
+        const readButtonInput = document.createElement('input');
+        readButtonInput.setAttribute("type", "checkbox");
+        readButtonInput.checked = book.read;
+        const readButtonSpan = document.createElement('span');
+        readButtonSpan.className = "slider round";
+        readButton.append(readButtonInput, readButtonSpan);
         const deleteButton = document.createElement('button');
         deleteButton.className = "deleteButton";
-        card.append(deleteButton);
-        card.append(title);
-        card.append(author);
-        card.append(pages);
+        deleteButton.textContent = "X";
+        card.append(deleteButton, title, author, pages, readButton);
         container.append(card);
         card.setAttribute("data-index", `${index}`);
         deleteButton.addEventListener("click", () =>{
-            bookRemover(deleteButton.getAttribute("data-index"));
+            bookRemover(card.getAttribute("data-index"));
         });
+        readButtonInput.addEventListener("click", () => {
+            book.readStatus();
+        })
     });
 }
 
@@ -64,14 +77,16 @@ submitBook.addEventListener("click", (event) => {
     bookMaker(document.querySelector("input#title").value,
     document.querySelector("input#author").value, 
     document.querySelector("input#pages").value, 
-    document.querySelector("input#read").value);
+    document.querySelector("input#read").checked);
+
     document.querySelector("input#title").value = "";
     document.querySelector("input#author").value = "";
     document.querySelector("input#pages").value = "";
-    document.querySelector("input#read").value = "";
+    document.querySelector("input#read").checked = false;
     form.classList.toggle("display-form")
-
 });
+
+
 
 
 
